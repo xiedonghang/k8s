@@ -1,0 +1,14 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: gitlab-ce
+  namespace: kube-ops
+spec:
+  rules:
+  - host: gitlab.foo.org
+    http: 
+      paths:
+      - path: /
+        backend:
+          serviceName: gitlab-ce
+          servicePort: 80
