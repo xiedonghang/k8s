@@ -93,13 +93,13 @@ spec:
       volumes:
         - name: data
           hostPath:
-            path: ~/Workspaces/data/gitlab/data
+            path: /Users/xie/Workspaces/data/gitlab/data
         - name: logs
           hostPath:
-            path: ~/Workspaces/data/gitlab/logs
+            path: /Users/xie/Workspaces/data/gitlab/logs
         - name: config
           hostPath:
-            path: ~/Workspaces/data/gitlab/config
+            path: /Users/xie/Workspaces/data/gitlab/config
 ---
 apiVersion: v1
 kind: Service
@@ -190,3 +190,4 @@ spec:
       - backend:
           serviceName: gitlab-ce
           servicePort: 80
+

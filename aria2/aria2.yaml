@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aria2
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: aria2
+  template:
+    metadata:
+      labels:
+        app: aria2
+    spec:
+      containers:
+      - name: aria2
+        image: wahyd4/aria2-ui:latest
+        # env:
+        # - name: ENABLE_AUTH
+        #   value: "true"
+        # - name: RPC_SECRET
+        #   value: Secret
+        # - name: DOMAIN
+        #   value: aria2.foo.org
+        # - name: ARIA2_USER
+        #   value: admin
+        # - name: ARIA2_PWD
+        #   value: admin123
+        # resources:
+        #   limits:
+        #     memory: "128Mi"
+        #     cpu: "500m"
+        ports:
+        - name: web
+          containerPort: 80
+          protocol: TCP
+        - name: rpc
+          containerPort: 6800
+          protocol: TCP
+        - name: ssh
+          containerPort: 443
+          protocol: TCP
+        volumeMounts:
+          - mountPath: /data
+            name: data
+          # - mountPath: /root/conf/key
+          #   name: key
+          # - mountPath: /root/conf/aria2.conf
+          #   name: conf
+      volumes:
+        - name: data
+          hostPath:
+            path: /Users/xie/Workspaces/data/aria2/data
+        # - name: key
+        #   hostPath:
+        #     path: /Users/xie/Workspaces/data/aria2/conf/key
+        # - name: conf
+        #   hostPath:
+        #     path: /Users/xie/Workspaces/data/aria2/conf/aria2.conf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aria2
+  namespace: default
+spec:
+  selector:
+    app: aria2
+  ports:
+  - name: web
+    port: 80
+    targetPort: 80
+  - name: ssh
+    port: 443
+    targetPort: 443
+  - name: rpc
+    port: 6800
+    targetPort: 6800

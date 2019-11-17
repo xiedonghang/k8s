@@ -1,0 +1,7 @@
+docker-compose.ymlrunner: 
+  image: gitlab/gitlab-runner
+  restart: always
+  container_name: gitlab-runner
+  volumes: 
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /srv/gitlab-runner/config:/etc/gitlab-runner
