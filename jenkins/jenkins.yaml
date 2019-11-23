@@ -1,3 +1,93 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins
+  namespace: kube-ops
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: jenkins
+rules:
+  - apiGroups: 
+      - extensions
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - watch
+      - patch
+      - update
+  - apiGroups: 
+      - ""
+    resources:
+      - services
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - watch
+      - patch
+      - update
+  - apiGroups: 
+      - ""
+    resources:
+      - pods
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - watch
+      - patch
+      - update
+  - apiGroups: 
+      - ""
+    resources:
+      - pods/exec
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - watch
+      - patch
+      - update
+  - apiGroups: 
+      - ""
+    resources:
+      - pods/log
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups: 
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: jenkins
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: jenkins
+subjects:
+  - kind: ServiceAccount
+    name: jenkins
+    namespace: kube-ops
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12,6 +102,8 @@ spec:
       labels:
         app: jenkins
     spec:
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: jenkins
       containers:
       - name: jenkins
         image: jenkins/jenkins:lts
@@ -26,6 +118,27 @@ spec:
         - containerPort: 50000
           name: agent
           protocol: TCP
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+            httpGet:
+              path: /login
+              port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            failureThreshold: 12
+        readinessProbe:
+            httpGet:
+               path: /login
+               port: 8080
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            failureThreshold: 12
         volumeMounts:
         - name: jenkins-home
           mountPath: /var/jenkins_home
@@ -48,6 +161,7 @@ spec:
   - port: 8080
     targetPort: 8080
     name: web
+    nodePort: 30002
   - port: 50000
     targetPort: 50000
     name: agent
