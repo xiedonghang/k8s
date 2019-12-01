@@ -1,14 +1,14 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: nexus
+  name: gitlab-ce
   namespace: kube-ops
 spec:
   entryPoints:
     - web
   routes:
-  - match: Host(`maven.foo.org`)
+  - match: Host(`gitlab.foo.org`)
     kind: Rule
     services:
-    - name: nexus
-      port: 8081
+    - name: gitlab-ce
+      port: 80

@@ -1,14 +1,14 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: nexus
+  name: jenkins
   namespace: kube-ops
 spec:
   entryPoints:
     - web
   routes:
-  - match: Host(`maven.foo.org`)
+  - match: Host(`jenkins.foo.org`)
     kind: Rule
     services:
-    - name: nexus
-      port: 8081
+    - name: jenkins
+      port: 8080
