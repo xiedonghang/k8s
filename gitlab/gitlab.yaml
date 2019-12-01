@@ -171,23 +171,4 @@ spec:
         image: redis:4.0.14-alpine
         ports:
         - containerPort: 6379
----
-apiVersion: networking.k8s.io/v1beta1
-kind: Ingress
-metadata:
-  name: gitlab-ce
-  namespace: kube-ops
-  labels:
-    type: ingress
-    app: gitlab-ce
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  rules:
-  - host: gitlab.foo.org
-    http:
-      paths:
-      - backend:
-          serviceName: gitlab-ce
-          servicePort: 80
 
