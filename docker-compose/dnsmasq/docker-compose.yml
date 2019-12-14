@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  dnsmasq:
+    container_name: dnsmasq
+    image: "jpillora/dnsmasq"
+    restart: always
+    networks:
+      - traefik
+      - default
+    environment:
+      - TZ=Asia/Shanghai
+      - HTTP_USER=foo
+      - HTTP_PASS=bar
+    volumes:
+      - "./dns/dnsmasq.conf:/etc/dmZsmasq.conf"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dnsmasq.rule=Host(`dns.foo.org`)"
+      - "traefik.http.routers.dnsmasq.entrypoints"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.dnsmasq.service=dnsmasq"
+      - "traefik.http.services.dnsmasq.loadbalancer.server.port=8080"
+
+networks:
+  traefik:
+     external: true
