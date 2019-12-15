@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  nexus3:
+    image: sonatype/nexus3
+    restart: always
+    networks:
+      - traefik
+    volumes:
+      - nexus-data:/nexus-data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nexus3.rule=Host(`maven.foo.org`)"
+      - "traefik.http.routers.nexus3.entrypoints"
+
+networks:
+  traefik:
+     external: true
+
+volumes:
+  nexus-data:

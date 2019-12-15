@@ -7,15 +7,15 @@ services:
     networks:
       - traefik
     volumes:
-      - ./data/:/var/jenkins_home
+      - jenkins_home:/var/jenkins_home
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jenkins.rule=Host(`jenkins.foo.org`)"
       - "traefik.http.routers.jenkins.entrypoints"
-      # - "traefik.docker.network=traefik"
-      # - "traefik.http.routers.jenkins.service=jenkins"
-      # - "traefik.http.services.jenkins.loadbalancer.server.port=8080"
 
 networks:
   traefik:
      external: true
+
+volumes:
+  jenkins_home:

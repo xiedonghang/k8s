@@ -3,31 +3,44 @@ version: '3'
 
 services:
   openldap:
-    container_name: openldap
     image: osixia/openldap
     ports: 
       - "389:389"
-      - "636:636"
-    command: [--copy-service,  --loglevel, debug]
+    networks:
+      - openldap
     environment:
-      - LDAP_ORGANISATION="foo"
-      - LDAP_DOMAIN="foo.org"
-      - LDAP_ADMIN_PASSWORD="ldap123"
-    # volumes:
-    #   - /Users/xie/Workspaces/data/openldap/database:/var/lib/ldap
-    #   - /Users/xie/Workspaces/data/openldap/config:/etc/ldap/slapd.d
+      - LDAP_ORGANISATION=zhiantech
+      - LDAP_DOMAIN=zhiantech.com
+      - LDAP_ADMIN_PASSWORD=567534
+    volumes:
+      - database:/var/lib/ldap
+      - config:/etc/ldap/slapd.d
     restart: always
 
   phpldapadmin:
-    container_name: phpldapadmin
     image: osixia/phpldapadmin
     ports: 
       - "10004:80"
+    networks:
+      - traefik
+      - openldap
     restart: always
     environment:
       - PHPLDAPADMIN_HTTPS=false
       - PHPLDAPADMIN_LDAP_HOSTS=openldap
-    links:
-      - openldap
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.phpldapadmin.rule=Host(`pda.foo.org`)"
+      - "traefik.http.routers.phpldapadmin.entrypoints"
     depends_on:
       - openldap
+
+networks:
+  openldap:
+    driver: bridge
+  traefik:
+     external: true
+
+volumes:
+  database:
+  config:
