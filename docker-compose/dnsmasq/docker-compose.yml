@@ -8,12 +8,15 @@ services:
     networks:
       - traefik
       - default
+    ports:
+      - "53:53/udp"
+      - "5380:8080"
     environment:
       - TZ=Asia/Shanghai
       - HTTP_USER=foo
       - HTTP_PASS=bar
     volumes:
-      - "./dns/dnsmasq.conf:/etc/dmZsmasq.conf"
+      - "./dns/dnsmasq.conf:/etc/dnsmasq.conf"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.dnsmasq.rule=Host(`dns.foo.org`)"
